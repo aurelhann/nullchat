@@ -73,7 +73,7 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
 
         var options = {
             userIds: [{ name:'nullchat', email:'nullchat@cydrobolt.com' }],
-            numBits: RSA_KEY_SIZE // RSA key size
+            rsaBits: RSA_KEY_SIZE // RSA key size
         }
 
         openpgp.generateKey(options).then(function(key) {
@@ -90,39 +90,31 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
         return deferred.promise
     }
 
-    $scope.encryptForTarget = function(message) {
-        var deferred = $q.defer()
-
-        var options = {
-            data: message,
-            publicKeys: openpgp.key.readArmored($scope.keys.targetPubkey).keys,
-            privateKeys: openpgp.key.readArmored($scope.keys.privkey).keys,
+    $scope.encryptForTarget = async function(message) {
+        const options = {
+            message: openpgp.message.fromText(message),
+            publicKeys: (await openpgp.key.readArmored($scope.keys.targetPubkey)).keys,
+            privateKeys: (await openpgp.key.readArmored($scope.keys.privkey)).keys,
             armor: true
         }
 
-        openpgp.encrypt(options).then(function(ciphertext) {
-            var encryptedAsc = ciphertext.data
-            deferred.resolve(encryptedAsc)
+        return openpgp.encrypt(options).then(function(ciphertext) {
+            return ciphertext.data;
         })
-
-        return deferred.promise
     }
 
-    $scope.decryptForSelf = function (message) {
-        var deferred = $q.defer()
-
-        var options = {
-            message: openpgp.message.readArmored(message),
-            publicKeys: openpgp.key.readArmored($scope.keys.targetPubkey).keys, // verify that the sender is correct
-            privateKey: openpgp.key.readArmored($scope.keys.privkey).keys[0],
+    $scope.decryptForSelf = async function (message) {
+        console.log(message + 'pouet')
+        const options = {
+            message: await openpgp.message.readArmored(message),
+            publicKeys: (await openpgp.key.readArmored($scope.keys.targetPubkey)).keys, // verify that the sender is correct
+            privateKeys: (await openpgp.key.readArmored($scope.keys.privkey)).keys,
             format: 'utf8'
         }
 
-        openpgp.decrypt(options).then(function(plaintext) {
-            deferred.resolve(plaintext)
+        return openpgp.decrypt(options).then(function(plaintext) {
+            return plaintext.data;
         })
-
-        return deferred.promise
     }
 
     $scope.connect = function () {
@@ -194,7 +186,7 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
                         console.log('expected', expectedRecvExchangeKey)
                         console.log('actual', recvExchangeKey)
 
-                        if (expectedRecvExchangeKey == recvExchangeKey.data) {
+                        if (expectedRecvExchangeKey == recvExchangeKey) {
                             // key exchange is verified
                             $scope.state.loaded = true
 
@@ -234,7 +226,7 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
                     $scope.$digest()
                 }
 
-                $scope.appendMessage(nick, plaintextMessage.data)
+                $scope.appendMessage(nick, plaintextMessage)
             })
         })
 
