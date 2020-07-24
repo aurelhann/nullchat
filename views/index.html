@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block css %}
-<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="./static/css/index.css">
 {% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
         <div class="intro col-md-4 col-md-offset-4">
             <h2 class="title">nullchat</h2>
             <a ng-click="createRoom()" href="#" class="btn btn-success create-room">create a room</a>
-            <a target="_blank" href="//github.com/cydrobolt/null" class="btn btn-danger">about</a>
+            <a target="_blank" href="//github.com/aurelhann/nullchat" class="btn btn-danger">about</a>
 
             <div class="alerts"></div>
         </div>
@@ -19,6 +19,6 @@
 {% endblock %}
 
 {% block js %}
-<script src="/static/js/vendor/sjcl.min.js"></script>
-<script src="/static/js/index.js"></script>
+<script src="./static/js/vendor/sjcl.min.js"></script>
+<script src="./static/js/index.js"></script>
 {% endblock %}

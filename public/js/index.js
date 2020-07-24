@@ -26,7 +26,7 @@ nullapp.controller('IndexCtrl', function($scope) {
         // generate secure key to ensure key exchange integrity
         var exchangeKey = _generateRandomKey()
 
-        window.location = '/chat/' + roomKey + '#' + exchangeKey
+        window.location = './chat/' + roomKey + '#' + exchangeKey
     }
 
     $scope.init = function () {

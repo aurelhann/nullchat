@@ -7,6 +7,9 @@ import nunjucks from 'nunjucks'
 
 import { getNick } from './lib/nicknames'
 
+//define sub path for reverse proxy usage
+let subPath = process.env['NULLCHAT_ROOT_PATH'] || '';
+
 /* initialization */
 let app = express()
 nunjucks.configure('views', {
@@ -15,15 +18,23 @@ nunjucks.configure('views', {
 })
 
 let server = http.Server(app)
-let io = SocketIO(server)
+let io = SocketIO(server, {
+    // path: `${subPath}/socket.io`
+})
+
+
 
 // TODO use redis to store keys & sockets
 let users = {}
 let rooms = {}
 
 /* middleware */
-app.use('/static', express.static('public'))
-app.use('/directives', express.static('directives'))
+const publicLibs = express.static('public');
+const directives = express.static('directives');
+app.use('/static', publicLibs)
+app.use('/directives', directives)
+app.use('/chat/static', publicLibs)
+app.use('/chat/directives', directives)
 
 /* routes */
 app.get('/', (req, res) => {
@@ -32,7 +43,7 @@ app.get('/', (req, res) => {
 
 app.get('/new_chat/', (req, res) => {
     var chatKey = crypto.randomBytes(16).toString('hex')
-    res.redirect('/chat/' + chatKey)
+    res.redirect(subPath + '/chat/' + chatKey)
 })
 
 app.get('/chat/:roomId', (req, res) => {
@@ -43,7 +54,7 @@ app.get('/chat/:roomId', (req, res) => {
         rooms[roomId] = []
     }
 
-    res.render('null.html', { roomId: roomId, rsaKeySize: rsaKeySize })
+    res.render('null.html', { roomId: roomId, rsaKeySize: rsaKeySize, subPath: subPath })
 })
 
 

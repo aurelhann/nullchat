@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block css %}
-<link rel="stylesheet" href="/static/css/null.css">
+<link rel="stylesheet" href="./static/css/null.css">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
                     nullchat
                 </a>
             </h2>
-            <a class="btn btn-danger about" href="//github.com/cydrobolt/nullchat">about</a>
+            <a class="btn btn-danger about" href="//github.com/aurelhann/nullchat">about</a>
         </div>
 
         <div class="chat-history">
@@ -53,9 +53,9 @@
     const ROOM_ID = '{{ roomId }}'
     const RSA_KEY_SIZE = {{ rsaKeySize }} || 2048
 </script>
-<script src="/static/js/vendor/openpgp.min.js"></script>
-<script src="/static/js/vendor/sjcl.min.js"></script>
-<script src="/static/js/vendor/ifvisible.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/static/js/null.js"></script>
+<script src="./static/js/vendor/openpgp.min.js"></script>
+<script src="./static/js/vendor/sjcl.min.js"></script>
+<script src="./static/js/vendor/ifvisible.min.js"></script>
+<script src="../socket.io/socket.io.js"></script>
+<script src="./static/js/null.js"></script>
 {% endblock %}

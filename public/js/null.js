@@ -11,7 +11,7 @@ nullapp.directive('chatItem', function() {
             time: '@'
         },
         replace: true,
-        templateUrl: '/directives/chatItem.html'
+        templateUrl: './directives/chatItem.html'
     }
 })
 
@@ -72,7 +72,7 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
         var deferred = $q.defer()
 
         var options = {
-            userIds: [{ name:'nullchat', email:'nullchat@cydrobolt.com' }],
+            userIds: [{ name:'nullchat', email:'nullchat@aurelhann.com' }],
             curve: 'p521'
         }
 
@@ -104,7 +104,6 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
     }
 
     $scope.decryptForSelf = async function (message) {
-        console.log(message + 'pouet')
         const options = {
             message: await openpgp.message.readArmored(message),
             publicKeys: (await openpgp.key.readArmored($scope.keys.targetPubkey)).keys, // verify that the sender is correct
@@ -118,7 +117,11 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
     }
 
     $scope.connect = function () {
-        $scope.sk = io()
+        // filter the location path
+        var socketLocation = window.location.pathname.split('/');
+        socketLocation.pop();
+        socketLocation.pop();
+        $scope.sk = io(window.location.origin, {path: (socketLocation.join('/') + '/socket.io')})
         $scope.state.loadingMsg = 'exchanging keypair'
 
         $scope.sk.on('welcome', function (nick) {
@@ -284,7 +287,7 @@ nullapp.controller('NullCtrl', function($scope, $compile, $q) {
 
     $scope.init = function () {
         console.log('initializing openpgp')
-        openpgp.initWorker({ path: '/static/js/vendor/openpgp.worker.min.js' })
+        openpgp.initWorker({ path: './static/js/vendor/openpgp.worker.min.js' })
         sjcl.random.startCollectors()
 
         // generate pgp keypair
