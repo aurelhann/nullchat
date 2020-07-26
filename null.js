@@ -6,6 +6,7 @@ import crypto from 'crypto'
 import nunjucks from 'nunjucks'
 
 import { getNick } from './lib/nicknames'
+import queryString from 'querystring';
 
 //define sub path for reverse proxy usage
 let subPath = process.env['NULLCHAT_ROOT_PATH'] || '';
@@ -42,13 +43,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/new_chat/', (req, res) => {
-    var chatKey = crypto.randomBytes(16).toString('hex')
-    res.redirect(subPath + '/chat/' + chatKey)
+    var chatKey = crypto.randomBytes(32).toString('hex')
+    var escaped_str = queryString.escape(chatKey);
+    res.redirect(subPath + '/chat/' + escaped_str)
 })
 
 app.get('/chat/:roomId', (req, res) => {
     var roomId = req.params.roomId
-    var rsaKeySize = process.env.RSA_KEY_SIZE || 2048
+    var rsaKeySize = process.env.RSA_KEY_SIZE || 4096
 
     if (!(roomId in rooms)) {
         rooms[roomId] = []
